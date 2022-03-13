@@ -25,13 +25,36 @@ class Game
     # else
       # execute player_turn(@@turn)
     
-    #check for 3 across
-    if @board.each_with_index do |array, row|
-        @board.each_with_index do |value, column|
-          if value = 'X' || value = 'O'
-          end
-        end
+    if
+    #check for 3 across - put this into its own method, if it returns false it skips to next
+    @board.each do | i |
+      if i.all? {|j| j == "X"}
+        @@turn_count = 11         #try removing later
+        declare_winner("X")
+      elsif i.all? { |j| j == "O"}
+        @@turn_count = 11
+        declare_winner("O")         #try removing later 
+      end
     end
+
+  elsif
+    #check for 3 down - put this into its own method, if it returns false it skips to next
+    flat = @board.flatten
+    flat.each_with_index do |v, i|
+      if v == 'X' && flat[i + 3] == 'X' && flat[i + 6] == 'X'
+        declare_winner("X")
+      elsif v == 'O' && flat[i + 3] == 'O' && flat[i + 6] == 'O'
+        declare_winner("O")
+      end
+    end
+
+  elsif
+    #check diagonals - put this into its own method, if it returns false it skips to next
+
+  else 
+    player_turn(@@turn_count)
+
+    
 
   def player_turn(turn)
     # if turn % 2 != 0 (i.e. odd number = player 1, even = player 2)
@@ -55,8 +78,8 @@ class Game
 
   def declare_winner(symbol)
      #if symbol == 'O' 
-        #declare @player_one winner
-     #else declare @player_two winner
+        #puts @player_one winner
+     #else puts @player_two winner
   end
 
   # def end_game
