@@ -18,6 +18,39 @@ class Game
     puts "#{board[2][0]} | #{board[2][1]} | #{board[2][2]}"
   end
 
+  def player_turn(turn)
+    if turn.odd?
+      player_choice(@player_one_name, 'O')
+    else
+      player_choice(@player_two_name, 'X')
+    end
+  end
+
+  def player_choice(player, symbol)
+    puts "#{player} please enter your coordinates (0..2) separated by a space"
+    input = gets.chomp
+    input_array = input.split
+    coord_one = input_array[0].to_i
+    coord_two = input_array[1].to_i
+
+    # loop until the user input is valid - has space, between 0 and two, board slot is free
+    until input.match(/\s/) && coord_one.between?(0, 2) && coord_two.between?(0, 2) && @board[coord_one][coord_two] == '_'
+      puts 'Please enter valid coordinates for an empty space in the grid'
+      input = gets.chomp
+      input_array = input.split
+      coord_one = input_array[0].to_i
+      coord_two = input_array[1].to_i
+    end
+
+    add_to_board(coord_one, coord_two, symbol)
+  end
+
+
+  def add_to_board(coord_one, coord_two, symbol)
+    @board[coord_one][coord_two] = symbol
+    @@turn_count += 1
+  end
+
   # check 3 across
   def three_across  
     @board.each do |i|
@@ -52,48 +85,17 @@ class Game
   # check diagonal
   def three_diagonal
     center_val = @board[1][1]
-    if @board[0][0] && @board[2][2] == center_val
-      @@winner = center_val
-      @@turn_count = 10
-    elsif @board[2][0] && @board[0][2] == center_val
-      @@winner = center_val
-      @@turn_count = 10
+    if center_val == 'X' || center_val == 'O'
+      if @board[0][0] && @board[2][2] == center_val
+        @@winner = center_val
+        @@turn_count = 10
+      elsif @board[2][0] && @board[0][2] == center_val
+        @@winner = center_val
+        @@turn_count = 10
+      end
     else
       nil
     end
-  end
-
-  def player_turn(turn)
-    if turn.odd?
-      player_choice(@player_one_name, 'O')
-    else
-      player_choice(@player_two_name, 'X')
-    end
-  end
-
-  def player_choice(player, symbol)
-    puts "#{player} please enter your coordinates (0..2) separated by a space"
-    input = gets.chomp
-    input_array = input.split
-    coord_one = input_array[0].to_i
-    coord_two = input_array[1].to_i
-
-    # loop until the user input is valid - has space, between 0 and two, board slot is free
-    until input.match(/\s/) && coord_one.between?(0, 2) && coord_two.between?(0, 2) && @board[coord_one][coord_two] == '_'
-      puts "Please enter valid coordinates an empty space in the grid"
-      input = gets.chomp
-      input_array = input.split
-      coord_one = input_array[0].to_i
-      coord_two = input_array[1].to_i
-    end
-
-    add_to_board(coord_one, coord_two, symbol)
-  end
-
-
-  def add_to_board(coord_one, coord_two, symbol)
-    @board[coord_one][coord_two] = symbol
-    @@turn_count += 1
   end
 
   def declare_result(symbol)
@@ -118,7 +120,7 @@ class Game
       player_turn(@@turn_count)
       three_across
       three_down
-      # three_diagonal
+       three_diagonal
       display_board(@board)
     end
 
